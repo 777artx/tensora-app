@@ -25,6 +25,9 @@
  *   FLEET_HOP_MAX_USD=3      largest on-chain USDC hop (hop sizes are random)
  *   FLEET_HOP_MAX_PCT=90     most of a wallet's balance one hop may move
  *   FLEET_FLOOR_USD=5        rebalance so no wallet sits below this (0 = off)
+ *   FLEET_CASCADE_HOPS=10    >min transfers chained wallet->wallet per cycle
+ *   FLEET_CASCADE_MIN_USD=6  smallest cascade transfer (the ">$6" rule)
+ *   FLEET_CASCADE_MAX_USD=12 cap each cascade transfer (0 = no cap)
  *   FLEET_LEDGER_FLOOR_USD=15 top up a ledger account below this
  *   FLEET_TOPUP_MAX_USD=15    most USDC a single hop may move
  *   FLEET_HOP_CHANCE=0.25     odds a cycle moves real USDC on-chain
@@ -91,6 +94,14 @@ const CFG = {
   // Working floor per wallet. In on-chain mode a rebalancer moves USDC from
   // rich to poor wallets each cycle so none is stranded below this.
   floorUsd: num("FLEET_FLOOR_USD", 5),
+  // A cascade chains >min transfers wallet->wallet, each wallet forwarding what
+  // it just received. One funded wallet therefore produces many visible
+  // transfers without the whole float having to be large.
+  cascadeHops: Math.max(0, num("FLEET_CASCADE_HOPS", 10)),
+  cascadeMaxUsd: Math.max(0, num("FLEET_CASCADE_MAX_USD", 12)),
+  // Smallest cascade transfer. Keep this above the book minimum so the
+  // transfers are meaningful, not dust.
+  cascadeMinUsd: num("FLEET_CASCADE_MIN_USD", 6),
   spacingMs: Math.round(num("FLEET_SPACING_MS", 3_000)),
   ledgerFloor: num("FLEET_LEDGER_FLOOR_USD", 15),
   topUpMax: num("FLEET_TOPUP_MAX_USD", 15),
@@ -348,6 +359,8 @@ if (PLAN_ONLY) {
   out(`  ledger floor ${money(CFG.ledgerFloor)} · hop chance ${CFG.hopChance} · fund=${CFG.fund}`);
   out(`  hop ${money(CFG.hopMinUsd)}–${money(CFG.hopMaxUsd)} random · gas floor ${CFG.gasFloorEth} ETH`);
   out(`  floor ${money(CFG.floorUsd)} · wallets/cycle ${CFG.perCycle}`);
+  if (CFG.cascadeHops > 0)
+    out(`  cascade ${CFG.cascadeHops} hops ≥ ${money(CFG.cascadeMinUsd)} per seed`);
   out("\nDry plan only — nothing submitted.");
   process.exit(0);
 }
@@ -482,6 +495,101 @@ async function rebalance(cycle: number): Promise<number> {
   return moved;
 }
 
+/**
+ * A chain of transfers, each comfortably above `minAmount`, moving
+ * wallet -> wallet -> wallet. Each wallet forwards what it just received, so a
+ * single funded wallet produces a long run of visible >$min transfers without
+ * the aggregate float having to be large.
+ *
+ * In peer mode this conserves the float: the money ends up somewhere in the
+ * fleet, just having passed through several hands. The run stops when the
+ * balance drops below the amount, or after `hops` transfers.
+ */
+async function cascade(
+  seed: FleetWallet,
+  hops: number,
+  minAmount: number,
+  cycle: number
+): Promise<number> {
+  if (!ENV_ONCHAIN || !chain || hops <= 0 || minAmount <= 0) return 0;
+  if (!(await hasGas(seed))) return 0;
+
+  let held = await walletUsd(seed);
+  if (held < minAmount) {
+    logLine({ skip: "cascade_seed_too_small", wallet: seed.address, held, cycle });
+    return 0;
+  }
+
+  const cap = CFG.cascadeMaxUsd > 0 ? CFG.cascadeMaxUsd : Infinity;
+  let from = seed;
+  let moved = 0;
+
+  for (let i = 0; i < hops; i++) {
+    if (stopping) break;
+    // Re-read before each hop: the recipient's balance moves as the chain
+    // settles, and a stale read makes the next transfer look unaffordable.
+    held = await walletUsd(from);
+    // Randomise inside [min, cap] so the run does not look like a fixed drip.
+    const upper = Math.min(held, cap);
+    if (upper < minAmount) {
+      logLine({ skip: "cascade_below_min", wallet: from.address, held, minAmount, cycle });
+      break;
+    }
+    let amount = round2(rand(minAmount, upper));
+    // Keep the sender above the working floor when we can, so it stays able to
+    // trade. If its whole balance is below the floor, forward everything that
+    // clears the minimum — that is the whole point of the cascade.
+    if (held - amount < CFG.floorUsd) {
+      const room = round2(held - CFG.floorUsd);
+      if (room >= minAmount) amount = room;
+      else if (held >= minAmount) amount = round2(held);
+      else break;
+    }
+    // Forward to a wallet that is not us and not the one we just received from.
+    const candidates = wallets.filter(
+      (x) => x.address.toLowerCase() !== from.address.toLowerCase()
+    );
+    if (candidates.length === 0) break;
+    const dest = candidates[randInt(0, candidates.length - 1)];
+
+    // Credit the sender's ledger from this verified hash. The wallet has
+    // provably moved funds on-chain, and the ledger credit is what gives it
+    // spendable balance to trade the book with — so one real transfer both
+    // moves the float and produces visible activity.
+    const ok = await hopUsdc(
+      from,
+      dest.address,
+      amount,
+      cycle,
+      "cascade",
+      userIdFor(from),
+      minAmount
+    );
+    if (!ok) break;
+    moved = round2(moved + amount);
+    held = round2(held - amount);
+
+    // The recipient now holds what it received and can forward it onward.
+    from = dest;
+  }
+  return moved;
+}
+
+/**
+ * Pick the wallet holding the most USDC. The cascade starts here, and after the
+ * first run the float always pools in a wallet holding at least one transfer,
+ * so a seed is always available without merging wallets.
+ */
+async function richestWallet(): Promise<{ w: FleetWallet; usd: number } | null> {
+  if (!ENV_ONCHAIN || !chain || wallets.length === 0) return null;
+  let best: { w: FleetWallet; usd: number } | null = null;
+  for (const w of wallets) {
+    const usd = await walletUsd(w);
+    if (!best || usd > best.usd) best = { w, usd };
+  }
+  return best;
+}
+
 /** One on-chain USDC transfer, verified against the token contract. */
 async function hopUsdc(
   from: FleetWallet,
@@ -489,17 +597,31 @@ async function hopUsdc(
   spendUsd: number,
   cycle: number,
   phase: string,
-  creditUserId?: string
+  creditUserId?: string,
+  minAmountUsd?: number
 ): Promise<boolean> {
   if (!chain) return false;
   if (!(await hasGas(from))) {
     logLine({ skip: "no_gas", wallet: from.address, cycle, phase });
     return false;
   }
+  const minAmount = minAmountUsd ?? CFG.hopMinUsd;
   const raw = await refreshRawBalance(from);
-  const spendRaw = BigInt(Math.round(spendUsd * 1e6));
-  if (spendRaw <= 0n || spendRaw > raw) {
-    logLine({ skip: "insufficient", wallet: from.address, cycle, phase, want: spendUsd });
+  // Clamp to the balance actually read here. The caller's sizing read and this
+  // one hit different nodes of a load-balanced RPC, so they can disagree by a
+  // few wei; clamping keeps the transfer valid instead of failing the hop.
+  let spendRaw = BigInt(Math.round(spendUsd * 1e6));
+  if (spendRaw > raw) spendRaw = raw;
+  if (spendRaw < BigInt(Math.round(minAmount * 1e6))) {
+    logLine({
+      skip: "insufficient",
+      wallet: from.address,
+      cycle,
+      phase,
+      want: spendUsd,
+      have: Number(raw) / 1e6,
+      min: minAmount,
+    });
     return false;
   }
   if (DRY) {
@@ -727,11 +849,54 @@ for (cycle = 1; infinite || cycle <= CFG.cycles; cycle++) {
 
   // 1) Rebalance first: top the poorest wallets up so none is stranded below
   //    the floor and unable to trade. In peer mode this conserves the float.
-  try {
-    const moved = await rebalance(cycle);
-    if (moved > 0) out(`  rebalanced ${money(moved)} to wallets below ${money(CFG.floorUsd)}`);
-  } catch (err) {
-    logLine({ warn: "rebalance", cycle, error: String((err as Error)?.message) });
+  //    Skipped when cascades are on — the cascade moves the float itself, and
+  //    running both would spend transfers undoing each other.
+  if (CFG.cascadeHops <= 0) {
+    try {
+      const moved = await rebalance(cycle);
+      if (moved > 0) out(`  rebalanced ${money(moved)} to wallets below ${money(CFG.floorUsd)}`);
+    } catch (err) {
+      logLine({ warn: "rebalance", cycle, error: String((err as Error)?.message) });
+    }
+  }
+
+  // 1b) Cascades: chain >min transfers wallet->wallet so the chain shows a
+  //     steady run of visible movements, not one transfer per cycle.
+  //     Seed from the richest wallets: the float pools wherever a previous
+  //     cascade ended, so following the balance keeps runs long without
+  //     needing the whole fleet to be large.
+  if (ENV_ONCHAIN && CFG.cascadeHops > 0 && !stopping) {
+    const top = await richestWallet();
+    if (!top) {
+      logLine({ warn: "cascade_idle", cycle, reason: "no wallet readable" });
+    } else if (top.usd < CFG.cascadeMinUsd) {
+      // Only possible before the first cascade: once a run completes, the float
+      // pools in a wallet holding at least one transfer, so a seed always
+      // exists. Merging wallets here would be an extra transfer that the first
+      // cascade makes redundant, so we wait instead.
+      logLine({
+        warn: "cascade_idle",
+        cycle,
+        reason: "richest wallet below cascade minimum",
+        richest: top.usd,
+        min: CFG.cascadeMinUsd,
+      });
+      out(`  cascade idle: richest holds ${money(top.usd)} < ${money(CFG.cascadeMinUsd)}`);
+    } else {
+      const before = totalHops;
+      try {
+        await cascade(top.w, CFG.cascadeHops, CFG.cascadeMinUsd, cycle);
+      } catch (err) {
+        logLine({
+          warn: "cascade",
+          wallet: top.w.address,
+          cycle,
+          error: String((err as Error)?.message),
+        });
+      }
+      if (totalHops > before)
+        out(`  cascaded ${totalHops - before} transfer(s) from ${top.w.address.slice(0, 10)}…`);
+    }
   }
 
   // 2) Keep every wallet's ledger account funded (rate-limited on-chain).

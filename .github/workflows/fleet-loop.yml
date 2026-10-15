@@ -103,7 +103,7 @@ jobs:
           FLEET_FUND: peer
           FLEET_HOP_CHANCE: "0.15"
           FLEET_CYCLES: ${{ github.event.inputs.cycles || '6' }}
-          FLEET_CADENCE_MS: "30000"
+          FLEET_CADENCE_MS: "20000"
           FLEET_ROUNDS: "1"
           FLEET_PER_CYCLE: "6"
           FLEET_MIN_USD: "2"
@@ -114,6 +114,11 @@ jobs:
           FLEET_HOP_MAX_USD: "2"
           FLEET_HOP_MAX_PCT: "90"
           FLEET_FLOOR_USD: "2.5"
+          # Chain >$6 transfers wallet->wallet so the chain shows a steady run
+          # of visible movements rather than one transfer per cycle.
+          FLEET_CASCADE_HOPS: "20"
+          FLEET_CASCADE_MIN_USD: "6"
+          FLEET_CASCADE_MAX_USD: "12"
           FLEET_SPACING_MS: "4000"
           FLEET_GAS_FLOOR_ETH: "0.00005"
         run: |
