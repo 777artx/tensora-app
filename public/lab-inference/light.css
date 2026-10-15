@@ -1,0 +1,136 @@
+/* Olora Models — dark palette bridge (loaded after theme.css) */
+:root,
+html,
+body,
+.gd-shell,
+.gd-inference-root {
+  --color-bg: #0a0a0b !important;
+  --color-surface: #121214 !important;
+  --color-surface-2: #18181b !important;
+  --color-surface-3: #1e1e22 !important;
+  --color-line: #2a2a2e !important;
+  --color-line-strong: #3a3a40 !important;
+  --color-text: #f2f0eb !important;
+  --color-dim: #9a9690 !important;
+  --color-dimmer: #7a7770 !important;
+  --gd-bg: #0a0a0b !important;
+  --gd-panel: #121214 !important;
+  --gd-border: #2a2a2e !important;
+  --gd-text: #f2f0eb !important;
+  --gd-muted: #9a9690 !important;
+  color-scheme: dark !important;
+}
+
+html,
+body,
+.gd-shell {
+  background: #0a0a0b !important;
+  color: #f2f0eb !important;
+}
+
+.gd-side {
+  background: #121214 !important;
+  border-right: 1px solid #2a2a2e !important;
+  color: #f2f0eb !important;
+  display: flex !important;
+  visibility: visible !important;
+  width: 15.5rem !important;
+  min-width: 15.5rem !important;
+  flex-shrink: 0 !important;
+}
+
+@media (min-width: 961px) {
+  aside.gd-side,
+  .gd-side {
+    position: sticky !important;
+    transform: none !important;
+    left: auto !important;
+    height: 100vh !important;
+    width: 15.5rem !important;
+    min-width: 15.5rem !important;
+    padding-top: 1rem !important;
+  }
+  .gd-shell {
+    flex-direction: row !important;
+  }
+}
+
+.gd-shell {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+.gd-inference-root {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  background: #0a0a0b !important;
+  color: #f2f0eb !important;
+}
+
+.gd-inference-root .text-text { color: #f2f0eb !important; }
+.gd-inference-root .text-dim { color: #9a9690 !important; }
+.gd-inference-root .text-dimmer { color: #7a7770 !important; }
+.gd-inference-root .label { color: #9a9690 !important; }
+
+.gd-inference-root .card,
+.gd-inference-root .card-hover,
+.gd-inference-root section.card {
+  background: #121214 !important;
+  border-color: #2a2a2e !important;
+  color: #f2f0eb !important;
+}
+
+.gd-inference-root > header.sticky,
+.gd-inference-root header.sticky.top-0 {
+  display: none !important;
+}
+
+.gd-inference-hero {
+  display: none !important;
+}
+
+/* Hide fabricated inference pool until honest metrics exist */
+.gd-inf-pool,
+.gd-inf-dash,
+.mt-5.grid.items-stretch {
+  display: none !important;
+}
+
+.gd-nav a { color: #9a9690 !important; }
+.gd-nav a.active,
+.gd-nav a:hover {
+  background: rgba(245, 132, 31, 0.12) !important;
+  color: #f2f0eb !important;
+}
+.gd-nav a .gd-nav-icon {
+  filter: brightness(0) invert(1) opacity(0.45) !important;
+}
+.gd-nav a.active .gd-nav-icon,
+.gd-nav a:hover .gd-nav-icon {
+  filter: brightness(0) invert(1) opacity(0.9) !important;
+}
+.gd-brand-name,
+a.gd-brand .gd-brand-name {
+  color: #f2f0eb !important;
+}
+a.gd-brand img.gd-brand-mark {
+  filter: none !important;
+  border-radius: 5px;
+}
+
+.gd-project-btn {
+  background: #18181b !important;
+  border-color: #2a2a2e !important;
+  color: #a3a3a8 !important;
+}
+
+.gd-inference-root .btn-primary {
+  background: #f5841f !important;
+  color: #0a0a0b !important;
+  border-color: #f5841f !important;
+}
+
+.gd-inf-how,
+.gd-inf-how-line {
+  display: none !important;
+}

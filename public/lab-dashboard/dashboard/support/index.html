@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate"/>
+    <script src="/lab-dashboard/gd/fresh.js?v=fresh3"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Support | Frontier Lab</title>
+    <meta
+      name="description"
+      content="Contact Frontier Lab about environments, evaluations, training, inference, billing, or GPUs."
+    />
+    <link rel="icon" href="/landing/icons/favicon.svg?v=frontier1" type="image/svg+xml" />
+    <link rel="icon" href="/landing/icons/favicon-32.png?v=frontier1" type="image/png" sizes="32x32" />
+    <link rel="stylesheet" href="/lab-dashboard/_next/static/css/3691ca63cd989f77.css" />
+    <link rel="stylesheet" href="/lab-router/theme.css?v=nav6" />
+    <link rel="stylesheet" href="/lab-dashboard/gd/shell.css?v=dark1" />
+  </head>
+  <body class="__variable_0ed695">
+    <div class="gd-shell">
+      <aside class="gd-side">
+        <a class="gd-brand" href="/lab" aria-label="Frontier home">
+          <img class="gd-brand-mark" src="/landing/icons/frontier-mark.png?v=frontier1" alt="" /><span class="gd-brand-name">Frontier</span>
+        </a>
+        <div id="gd-lab-nav-mount"></div>
+      </aside>
+
+      <main class="gd-main">
+        <div class="gd-topbar">
+          <div>
+            <h1>Support</h1>
+            <p>
+              Get help with environments, evaluations, training, inference, billing, and GPU rentals.
+            </p>
+          </div>
+          <div class="gd-actions">
+            <a class="gd-btn" href="/docs">Docs</a>
+            <a class="gd-btn gd-btn-primary" href="/status">Platform status</a>
+          </div>
+        </div>
+
+        <div class="gd-support-page">
+          <div class="gd-support">
+            <div class="gd-support-grid">
+              <div class="gd-support-card">
+                <h3>Contact</h3>
+                <ul class="gd-support-list">
+                  <li><span>Email</span><a href="mailto:support@gradientrl.com">support@gradientrl.com</a></li>
+                  <li><span>Security</span><a href="mailto:security@gradientrl.com">security@gradientrl.com</a></li>
+                  <li><span>Billing</span><a href="mailto:billing@gradientrl.com">billing@gradientrl.com</a></li>
+                  <li><span>Status</span><a href="/status">gradientrl.com/status</a></li>
+                </ul>
+              </div>
+              <div class="gd-support-card">
+                <h3>Response times</h3>
+                <ul class="gd-support-list">
+                  <li><span>Critical outage</span><strong>&lt; 2 hours</strong></li>
+                  <li><span>Account / billing</span><strong>&lt; 1 business day</strong></li>
+                  <li><span>Product help</span><strong>&lt; 2 business days</strong></li>
+                  <li><span>Feature requests</span><strong>Reviewed weekly</strong></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="gd-support-card gd-support-topics">
+              <h3>Common topics</h3>
+              <div class="gd-support-topic-grid">
+                <a href="/docs#environments">Environments &amp; scoring</a>
+                <a href="/docs#evaluations">Evaluations &amp; leaderboards</a>
+                <a href="/docs#training">Training jobs</a>
+                <a href="/docs#inference">Inference</a>
+                <a href="/docs#gpus">On-Demand GPUs</a>
+                <a href="/docs#access">Access &amp; billing</a>
+                <a href="/docs#api">API keys &amp; auth</a>
+                <a href="/security">Security policy</a>
+              </div>
+            </div>
+
+            <form class="gd-support-form" id="gd-support-form">
+              <h3>Send a support request</h3>
+              <label class="gd-support-field">
+                <span>Work email</span>
+                <input name="email" type="email" required placeholder="you@company.com" />
+              </label>
+              <label class="gd-support-field">
+                <span>Category</span>
+                <select name="category" required>
+                  <option value="">Select one</option>
+                  <option>Lab / product</option>
+                  <option>GPU / compute</option>
+                  <option>Billing</option>
+                  <option>API / integration</option>
+                  <option>Security</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <label class="gd-support-field">
+                <span>Subject</span>
+                <input name="subject" required maxlength="120" placeholder="Short summary" />
+              </label>
+              <label class="gd-support-field">
+                <span>Details</span>
+                <textarea name="message" required rows="4" placeholder="What happened, what you expected, and any job/run IDs."></textarea>
+              </label>
+              <div class="gd-support-actions">
+                <button type="submit" class="gd-support-submit">Submit request</button>
+                <p class="gd-support-note">
+                  We reply by email. For live status, see <a href="/status">Platform Status</a>.
+                </p>
+              </div>
+            </form>
+            <div class="gd-support-done" id="gd-support-done" hidden>
+              <h3>Request received</h3>
+              <p>Thanks — support will follow up at the email you provided.</p>
+              <a class="gd-support-submit" href="/lab">Back to Lab</a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="/lab-dashboard/gd/nav.js?v=dark1"></script>
+    <script src="/lab-dashboard/gd/shell.js?v=dark1"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var side = document.querySelector(".gd-side");
+        if (side && window.GDLabNav) window.GDLabNav.mountStaticNav(side, "home");
+        var form = document.getElementById("gd-support-form");
+        var done = document.getElementById("gd-support-done");
+        if (!form) return;
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var fd = new FormData(form);
+          fetch("/api/book-call", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: String(fd.get("email") || ""),
+              company: "Support request",
+              need: String(fd.get("category") || "Support"),
+              stage: "In production",
+              message:
+                "[" +
+                String(fd.get("category") || "Support") +
+                "] " +
+                String(fd.get("subject") || "") +
+                "\n\n" +
+                String(fd.get("message") || ""),
+              source: "lab-support-page",
+            }),
+          }).catch(function () {});
+          form.hidden = true;
+          if (done) done.hidden = false;
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,141 @@
+# Keeps the Olora credits/USDC book live from the pulse wallet fleet.
+#
+# How it works
+# ------------
+# A scheduled run is one-shot, so the job itself runs a *bounded loop*
+# (`FLEET_CYCLES` cycles) and then exits. The schedule decides how often.
+#
+# Minutes budget — read this before changing the schedule
+# -------------------------------------------------------
+# GitHub bills each run rounded UP to a full minute, and a PRIVATE repo gets
+# 2,000 free minutes/month. Continuous coverage needs ~43,000 minutes, so a
+# private repo physically cannot run this 24/7 on the free tier.
+#
+# The schedule below is deliberately tuned to FIT the 2,000-minute budget so it
+# runs all month instead of dying after ~2 days:
+#
+#   every 2 hours (360 runs/mo) x ~5 billed min  = ~1,800 min/month
+#
+# That yields a burst of ~6 cycles (36 trades) every two hours. To get true
+# continuous 24/7 instead, pick one:
+#
+#   * make the repo public  -> unlimited free Actions minutes (simplest)
+#   * raise the spending limit / pay for minutes on a private repo
+#   * run `npm run fleet:loop:forever` on a VPS
+#
+# Check usage at: Settings -> Billing -> Actions.
+#
+# Required repository secrets
+# ---------------------------
+#   FLEET_WALLETS_JSON   full contents of .ops/pulse/wallets.json
+#   KV_REST_API_URL      production ledger (Upstash)
+#   KV_REST_API_TOKEN
+#   BASE_RPC_URL         optional; a private Base RPC is more reliable in CI
+#
+# SECURITY: these secrets hold keys that can move real funds. Any workflow
+# change or compromised dependency in this repo can read them. Keep the repo
+# private, limit admin access, and rotate the fleet if it is ever exposed.
+# Keys are written to the gitignored `.ops/pulse/` path at runtime and the
+# directory is deleted at the end of the run.
+
+name: Fleet loop
+
+on:
+  schedule:
+    # Every 2 hours — fits the 2,000 free min/month budget on a private repo.
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
+    inputs:
+      cycles:
+        description: "Cycles to run in this job"
+        required: false
+        default: "6"
+      dry:
+        description: "Plan only — read balances, submit nothing"
+        type: boolean
+        required: false
+        default: false
+
+# Never let two fleet runs overlap and double-trade the same ledger.
+concurrency:
+  group: fleet-loop
+  cancel-in-progress: false
+
+jobs:
+  pulse:
+    runs-on: ubuntu-latest
+    # Bounded so a run fits inside the free-minute budget.
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: tensora-app
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: tensora-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Materialise fleet wallets
+        env:
+          FLEET_WALLETS_JSON: ${{ secrets.FLEET_WALLETS_JSON }}
+        run: |
+          if [ -z "$FLEET_WALLETS_JSON" ]; then
+            echo "::error::Secret FLEET_WALLETS_JSON is missing."
+            exit 1
+          fi
+          mkdir -p .ops/pulse
+          printf '%s' "$FLEET_WALLETS_JSON" > .ops/pulse/wallets.json
+          node -e "JSON.parse(require('fs').readFileSync('.ops/pulse/wallets.json','utf8'));console.log('wallets.json parsed ok')"
+
+      - name: Run fleet loop
+        env:
+          KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
+          UPSTASH_REDIS_REST_URL: ${{ secrets.KV_REST_API_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
+          BASE_RPC_URL: ${{ secrets.BASE_RPC_URL }}
+          TENSORA_TREASURY_ADDRESS: ${{ secrets.TENSORA_TREASURY_ADDRESS }}
+          # Sustainability: hop to a peer, never the receive-only treasury.
+          FLEET_FUND: peer
+          FLEET_HOP_CHANCE: "0.15"
+          FLEET_CYCLES: ${{ github.event.inputs.cycles || '6' }}
+          FLEET_CADENCE_MS: "30000"
+          FLEET_ROUNDS: "1"
+          FLEET_PER_CYCLE: "6"
+          FLEET_MIN_USD: "2"
+          FLEET_MAX_USD: "25"
+          FLEET_LEDGER_FLOOR_USD: "10"
+          FLEET_TOPUP_MAX_USD: "15"
+          FLEET_HOP_MIN_USD: "0.25"
+          FLEET_HOP_MAX_USD: "3"
+          FLEET_HOP_MAX_PCT: "90"
+          FLEET_FLOOR_USD: "5"
+          FLEET_SPACING_MS: "4000"
+          FLEET_GAS_FLOOR_ETH: "0.00005"
+        run: |
+          if [ "${{ github.event.inputs.dry }}" = "true" ]; then
+            npx -y tsx scripts/pulse/loop-fleet.mts --onchain --plan
+          else
+            npx -y tsx scripts/pulse/loop-fleet.mts --onchain --yes
+          fi
+
+      - name: Upload loop log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fleet-loop-log
+          path: tensora-app/.ops/pulse/fleet-loop.jsonl
+          if-no-files-found: ignore
+          retention-days: 7
+
+      # Keys and logs are runner-local; drop them so nothing lingers.
+      - name: Scrub keys
+        if: always()
+        run: rm -rf .ops

@@ -1,0 +1,158 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+  # Try to keep Collaborative Deploy Preview drawer off (UI injects it either way).
+  NETLIFY_COLLABORATION = "false"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Pretty Lab/docs URLs → static shells in /public
+# force=true so these win over Next 404s on Netlify
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/landing/favicon.ico"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/docs"
+  to = "/docs/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/docs/"
+  to = "/docs/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/status"
+  to = "/status/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/status/"
+  to = "/status/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/terms"
+  to = "/terms/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/terms/"
+  to = "/terms/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/privacy/"
+  to = "/privacy/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/security"
+  to = "/security/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/security/"
+  to = "/security/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab"
+  to = "/lab/inference"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/lab/"
+  to = "/lab/inference"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/lab/leaderboard"
+  to = "/lab-leaderboard/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/leaderboard/"
+  to = "/lab-leaderboard/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/inference"
+  to = "/lab-inference/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/inference/"
+  to = "/lab-inference/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/router"
+  to = "/lab-router/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/router/"
+  to = "/lab-router/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/dashboard/home/quickstart"
+  to = "/lab-dashboard/dashboard/home/quickstart/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/dashboard/home/quickstart/"
+  to = "/lab-dashboard/dashboard/home/quickstart/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/dashboard/home"
+  to = "/lab-dashboard/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/dashboard/home/"
+  to = "/lab-dashboard/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/lab/dashboard/*"
+  to = "/lab-dashboard/dashboard/:splat/index.html"
+  status = 200
+  force = true

@@ -1,0 +1,77 @@
+{
+  "name": "Prime Intellect | Compute Platform",
+  "short_name": "Prime Intellect",
+  "description": "Access state-of-the-art AI compute infrastructure with H100 GPUs, InfiniBand, and 24/7 support. Compare 15+ clouds for the best GPUs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000",
+  "theme_color": "#845EEE",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "categories": ["business", "productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Create GPU Cluster",
+      "short_name": "Create",
+      "description": "Search across 15+ clouds to find the best and most affordable GPUs available.",
+      "url": "/dashboard/create-cluster",
+      "icons": [{ "src": "/favicon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Create Multi-Node Cluster",
+      "short_name": "Multi-Node Clusters",
+      "description": "Deploy 64+ H100s On-Demand",
+      "url": "/dashboard/clusters",
+      "icons": [{ "src": "/favicon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Decentralized AI Community",
+      "short_name": "Community",
+      "description": "Models, synthetic data generation, and agents powered by decentralized community-contributed compute.",
+      "url": "/intelligence",
+      "icons": [{ "src": "/favicon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

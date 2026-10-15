@@ -1,0 +1,430 @@
+/*
+ * OLORA shell. White page, black boxes, no gradients.
+ * Tokens live in globals.css; a black box (.ol-panel / .lab-dark) re-scopes the same
+ * token names to dark values so components work inside and outside without forks.
+ */
+
+.gd-lab-root {
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  background: var(--background);
+  min-height: 100vh;
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+}
+html[data-theme="dark"] .gd-lab-root {
+  color-scheme: dark;
+}
+
+.gd-lab-root h1,
+.gd-lab-root h2,
+.gd-lab-root h3,
+.gd-lab-root .lab-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+/* ── The black box ──────────────────────────────────────── */
+.ol-panel,
+.lab-dark {
+  --paper: #0a0a0a;
+  --surface: #0a0a0a;
+  --cloud: #161616;
+  --raise: #1f1f1f;
+  --hairline: rgba(255, 255, 255, 0.09);
+  --mist: rgba(255, 255, 255, 0.2);
+  --silver: #85857f;
+  --gray: #a3a39e;
+  --graphite: #c9c9c4;
+  --charcoal: #e2e2de;
+  --ink-2: #f0f0ec;
+  --ink: #fafaf8;
+  --foreground: #fafaf8;
+  --muted: #a3a39e;
+  --muted-2: #85857f;
+  --muted-3: #6a6a66;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --panel: #0a0a0a;
+  --panel-2: #161616;
+  --panel-3: #1f1f1f;
+  --orange: #fafaf8;
+  --positive: #5fc28e;
+  --negative: #ec7b6f;
+  color: var(--ink);
+  color-scheme: dark;
+}
+.ol-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  background: #0a0a0a;
+}
+html[data-theme="dark"] .ol-panel {
+  background: #141414;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.lab-dark {
+  border-radius: 0;
+}
+/* Header row inside a box: label left, controls right. */
+.ol-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 44px;
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Type helpers ───────────────────────────────────────── */
+.ol-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+.ol-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* ── Small key toggle (Book / Simple, 1D / 7D) ──────────── */
+.ol-keys {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--cloud);
+}
+.ol-key {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 7px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gray);
+  transition: color 160ms var(--ease), background 160ms var(--ease);
+}
+.ol-key:hover {
+  color: var(--ink);
+}
+.ol-key[aria-selected="true"],
+.ol-key[aria-pressed="true"] {
+  color: var(--paper);
+  background: var(--ink);
+}
+
+/* Hero line-art: server LEDs blink slowly. */
+@keyframes ol-twinkle {
+  0%,
+  86%,
+  100% {
+    fill: #e2e2de;
+  }
+  90%,
+  96% {
+    fill: #3b69f3;
+  }
+}
+.ol-hero-line .ol-twinkle {
+  animation: ol-twinkle calc(var(--tw-dur, 40s) / 6) steps(1, end) calc(var(--tw-delay, 0s) / 6) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ol-hero-line .ol-twinkle {
+    animation: none;
+  }
+}
+
+/* Order book sides. Exchange-standard green/red (Binance #0ECB81 / #F6465D). */
+.ol-panel,
+.lab-dark {
+  --book-bid: #0ecb81;
+  --book-ask: #f6465d;
+}
+.ol-bid {
+  color: var(--book-bid, #0a0a0a);
+}
+.ol-ask {
+  color: var(--book-ask, #8a8a86);
+}
+@keyframes ol-tape-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+.ol-tape-in {
+  animation: ol-tape-in 280ms ease-out;
+}
+.ol-bar-bid {
+  background: rgba(14, 203, 129, 0.14);
+}
+.ol-bar-ask {
+  background: rgba(246, 70, 93, 0.14);
+}
+@keyframes ol-flash-bid {
+  from { background-color: rgba(14, 203, 129, 0.22); }
+  to { background-color: transparent; }
+}
+@keyframes ol-flash-ask {
+  from { background-color: rgba(246, 70, 93, 0.22); }
+  to { background-color: transparent; }
+}
+.ol-flash-bid { animation: ol-flash-bid 650ms ease-out; }
+.ol-flash-ask { animation: ol-flash-ask 650ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .ol-flash-bid, .ol-flash-ask, .ol-tape-in { animation: none; }
+}
+
+/* Direction colours: real gain/loss and status only. */
+.ol-up {
+  color: var(--positive);
+}
+.ol-down {
+  color: var(--negative);
+}
+
+/* A value that just changed: one brief flash, then rest. */
+@keyframes ol-tick {
+  from {
+    opacity: 0.35;
+  }
+}
+.ol-tick {
+  animation: ol-tick 600ms var(--ease);
+}
+
+/* ── Legacy accent hooks, now solid ink ─────────────────── */
+.ol-grad-stroke,
+.group:hover .ol-hover-grad,
+a:hover > .ol-hover-grad {
+  stroke: currentColor;
+}
+.ol-grad-fill {
+  fill: currentColor;
+}
+.ol-grad-text {
+  color: inherit;
+}
+.ol-grad-bg {
+  background: var(--ink);
+  color: var(--paper);
+}
+.ol-grad-ring {
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.ol-aurora {
+  position: relative;
+}
+
+.ol-composer:focus-within {
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+.ol-switch-pill {
+  transition: transform 380ms var(--ease), width 380ms var(--ease);
+}
+
+@keyframes ol-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.ol-pop {
+  transform-origin: top right;
+  animation: ol-pop 180ms var(--ease) both;
+}
+
+.gd-lab-root code,
+.gd-lab-root pre,
+.gd-lab-root kbd,
+.gd-lab-root samp {
+  font-family: var(--font-mono);
+}
+
+/* ── Motion ─────────────────────────────────────────────── */
+@keyframes ol-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ol-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes ol-shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.lab-page-enter {
+  animation: ol-rise 360ms var(--ease) both;
+}
+.lab-hero-enter {
+  animation: ol-rise 420ms var(--ease) both;
+}
+.ol-rise {
+  animation: ol-rise 480ms var(--ease) both;
+}
+.ol-rise-1 {
+  animation-delay: 60ms;
+}
+.ol-rise-2 {
+  animation-delay: 120ms;
+}
+.ol-rise-3 {
+  animation-delay: 180ms;
+}
+.lab-live-dot {
+  animation: ol-pulse 2.4s ease-in-out infinite;
+}
+
+.ol-skeleton {
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--cloud) 25%, var(--raise) 50%, var(--cloud) 75%);
+  background-size: 200% 100%;
+  animation: ol-shimmer 1.4s linear infinite;
+}
+
+.ol-typing span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 4px;
+  border-radius: 999px;
+  background: var(--silver);
+  animation: ol-pulse 1.2s ease-in-out infinite;
+}
+.ol-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.ol-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.lab-howto {
+  counter-reset: howto;
+}
+.lab-howto > li {
+  counter-increment: howto;
+  position: relative;
+  padding-left: 2rem;
+}
+.lab-howto > li::before {
+  content: counter(howto, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-3);
+}
+
+/* Floating bar. Black on the light page, white on the dark page. */
+.ol-chrome {
+  background: #000;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.ol-chrome .ol-tab {
+  color: rgba(255, 255, 255, 0.7);
+}
+.ol-chrome .ol-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.ol-chrome .ol-tab[aria-current="page"] {
+  background: #fff;
+  color: #000;
+}
+.ol-mark-on-light {
+  display: none;
+}
+.ol-theme:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.ol-theme-sun {
+  display: none;
+}
+html[data-theme="dark"] .ol-chrome {
+  background: #fff;
+  color: #0a0a0a;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+html[data-theme="dark"] .ol-chrome .ol-tab {
+  color: rgba(0, 0, 0, 0.55);
+}
+html[data-theme="dark"] .ol-chrome .ol-tab:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0a0a0a;
+}
+html[data-theme="dark"] .ol-chrome .ol-tab[aria-current="page"] {
+  background: #0a0a0a;
+  color: #fff;
+}
+html[data-theme="dark"] .ol-mark-on-dark {
+  display: none;
+}
+html[data-theme="dark"] .ol-mark-on-light {
+  display: inline-flex;
+}
+html[data-theme="dark"] .ol-chrome .ol-theme:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+html[data-theme="dark"] .ol-theme-moon {
+  display: none;
+}
+html[data-theme="dark"] .ol-theme-sun {
+  display: block;
+}
+html[data-theme="dark"] .ol-chrome .ol-on-dark {
+  background: #0a0a0a;
+  color: #fff;
+}
+html[data-theme="dark"] .ol-chrome .ol-on-dark .font-mono {
+  color: #fff;
+}
+html[data-theme="dark"] .ol-chrome .ol-on-dark:hover {
+  background: #262624;
+}
+.ol-dock {
+  background: rgba(255, 255, 255, 0.95);
+}
+html[data-theme="dark"] .ol-dock {
+  background: rgba(10, 10, 10, 0.92);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+html[data-theme="dark"] .ol-hero-line {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.ol-prose {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

@@ -1,0 +1,156 @@
+[
+  {
+    "id": "anthropic/claude-fable-5.1",
+    "name": "Claude Fable 5.1",
+    "fullName": "Anthropic: Claude Fable 5.1",
+    "provider": "anthropic",
+    "description": "Anthropic's most capable model. Long, autonomous expert work.",
+    "context": "1M",
+    "inputPerM": 10,
+    "outputPerM": 50,
+    "logoDomain": "anthropic.com"
+  },
+  {
+    "id": "openai/gpt-6-astra",
+    "name": "GPT-6 Astra",
+    "fullName": "OpenAI: GPT-6 Astra",
+    "provider": "openai",
+    "description": "OpenAI's flagship for deep research and analysis.",
+    "context": "1M",
+    "inputPerM": 10,
+    "outputPerM": 50,
+    "logoDomain": "openai.com"
+  },
+  {
+    "id": "anthropic/claude-opus-5.5",
+    "name": "Claude Opus 5.5",
+    "fullName": "Anthropic: Claude Opus 5.5",
+    "provider": "anthropic",
+    "description": "Careful reasoning and large, multi-step coding work.",
+    "context": "1M",
+    "inputPerM": 4,
+    "outputPerM": 20,
+    "logoDomain": "anthropic.com"
+  },
+  {
+    "id": "openai/gpt-6.1-sol-pro",
+    "name": "GPT-6.1 Sol Pro",
+    "fullName": "OpenAI: GPT-6.1 Sol Pro",
+    "provider": "openai",
+    "description": "OpenAI's newest model with extended reasoning.",
+    "context": "1M",
+    "inputPerM": 2,
+    "outputPerM": 10,
+    "logoDomain": "openai.com"
+  },
+  {
+    "id": "google/gemini-3.1-pro-preview",
+    "name": "Gemini 3.1 Pro",
+    "fullName": "Google: Gemini 3.1 Pro",
+    "provider": "google",
+    "description": "Google's top reasoning model. Strong with images and long files.",
+    "context": "1M",
+    "inputPerM": 2,
+    "outputPerM": 12,
+    "logoDomain": "google.com"
+  },
+  {
+    "id": "qwen/qwen3.8-max-prime",
+    "name": "Qwen3.8 Max Prime",
+    "fullName": "Alibaba: Qwen3.8 Max Prime",
+    "provider": "qwen",
+    "description": "Alibaba's largest model. Strong at maths and multilingual work.",
+    "context": "1M",
+    "inputPerM": 4,
+    "outputPerM": 12,
+    "logoDomain": "qwen.ai"
+  },
+  {
+    "id": "z-ai/glm-5.3-prime",
+    "name": "GLM-5.3 Prime",
+    "fullName": "Z.ai: GLM-5.3 Prime",
+    "provider": "z-ai",
+    "description": "Z.ai's flagship for agentic coding and tool use.",
+    "context": "1M",
+    "inputPerM": 2.8,
+    "outputPerM": 8.8,
+    "logoDomain": "z.ai"
+  },
+  {
+    "id": "anthropic/claude-sonnet-5.5",
+    "name": "Claude Sonnet 5.5",
+    "fullName": "Anthropic: Claude Sonnet 5.5",
+    "provider": "anthropic",
+    "description": "Frontier quality at everyday speed. A superb writer.",
+    "context": "1M",
+    "inputPerM": 2,
+    "outputPerM": 10,
+    "logoDomain": "anthropic.com"
+  },
+  {
+    "id": "openai/gpt-6.1-sol",
+    "name": "GPT-6.1 Sol",
+    "fullName": "OpenAI: GPT-6.1 Sol",
+    "provider": "openai",
+    "description": "OpenAI's newest all-rounder for professional work.",
+    "context": "1M",
+    "inputPerM": 2,
+    "outputPerM": 10,
+    "logoDomain": "openai.com"
+  },
+  {
+    "id": "x-ai/grok-4.7",
+    "name": "Grok 4.7",
+    "fullName": "xAI: Grok 4.7",
+    "provider": "x-ai",
+    "description": "xAI's flagship. Strong at code and checks its own work.",
+    "context": "500K",
+    "inputPerM": 2,
+    "outputPerM": 6,
+    "logoDomain": "x.ai"
+  },
+  {
+    "id": "google/gemini-3.8-flash",
+    "name": "Gemini 3.8 Flash",
+    "fullName": "Google: Gemini 3.8 Flash",
+    "provider": "google",
+    "description": "Google's newest fast model. Reads huge files and images.",
+    "context": "1M",
+    "inputPerM": 0.75,
+    "outputPerM": 3.75,
+    "logoDomain": "google.com"
+  },
+  {
+    "id": "moonshotai/kimi-k3",
+    "name": "Kimi K3",
+    "fullName": "Moonshot: Kimi K3",
+    "provider": "moonshotai",
+    "description": "Moonshot's flagship. Long agentic tasks at a low input rate.",
+    "context": "1M",
+    "inputPerM": 0.38,
+    "outputPerM": 10,
+    "logoDomain": "moonshot.cn"
+  },
+  {
+    "id": "deepseek/deepseek-v4-pro-0813",
+    "name": "DeepSeek V4 Pro",
+    "fullName": "DeepSeek: DeepSeek V4 Pro",
+    "provider": "deepseek",
+    "description": "DeepSeek's flagship. Frontier reasoning at a fraction of the price.",
+    "context": "1M",
+    "inputPerM": 0.66,
+    "outputPerM": 1.98,
+    "logoDomain": "deepseek.com"
+  },
+  {
+    "id": "mistralai/mistral-medium-3-5",
+    "name": "Mistral Medium 3.5",
+    "fullName": "Mistral: Mistral Medium 3.5",
+    "provider": "mistralai",
+    "description": "Mistral's flagship. Fast, precise and European-hosted.",
+    "context": "262K",
+    "inputPerM": 1.5,
+    "outputPerM": 7.5,
+    "logoDomain": "mistral.ai"
+  }
+]

@@ -1,0 +1,247 @@
+@import "tailwindcss";
+
+/*
+ * OLORA design tokens
+ * Monochrome identity: hierarchy comes from type, contrast and space — not colour.
+ * Legacy token names (--orange, --brand-gradient, --gd-*) are kept and remapped to
+ * neutral values so older routes keep rendering inside the new identity.
+ */
+:root {
+  /*
+   * Neutral scale — black first. Names describe role, not lightness:
+   * --paper is the page, --ink is primary text, the rest step between them.
+   */
+  /* White page, black ink. Black boxes (.ol-panel) flip these locally. */
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --cloud: #f3f3f2;
+  --raise: #ebebea;
+  --hairline: #e4e4e2;
+  --mist: #cfcfcc;
+  --silver: #8a8a86;
+  --gray: #6a6a66;
+  --graphite: #3f3f3c;
+  --charcoal: #262624;
+  --ink-2: #161615;
+  --ink: #0a0a0a;
+  --white: #ffffff;
+
+  /* Semantic */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --panel: var(--surface);
+  --panel-2: var(--cloud);
+  --panel-3: var(--raise);
+  --border: var(--hairline);
+  --border-subtle: #efefed;
+  --muted: var(--gray);
+  --muted-2: var(--silver);
+  --muted-3: var(--silver);
+  --hero: var(--surface);
+  --hero-fg: var(--ink);
+  --hero-muted: var(--gray);
+
+  /*
+   * Brand. Blue is the one action colour (buttons, the live mark, the active
+   * nav rule). Ice is the highlight that sits on it (button text, the active
+   * hero row, the savings bar). Nothing else is coloured.
+   */
+  --brand: #3b69f3;
+  --brand-hover: #2e58d4;
+  --brand-ice: #e3feff;
+  --brand-soft: rgba(59, 105, 243, 0.1);
+
+  /* Status — used sparingly, desaturated */
+  --positive: #11804a;
+  --negative: #c4291c;
+  --live: #11804a;
+  --danger: #c4291c;
+
+  /*
+   * Brand accent — the landing gradient. Used sparingly: active marks, the send
+   * action, one highlight per view. --grad-lift is the same hue pair raised for
+   * legibility on black (text and hairline strokes only).
+   */
+  /* No gradients. The "accent" is solid ink; kept as variables for old call sites. */
+  --grad-a: var(--ink);
+  --grad-b: var(--ink);
+  --grad: var(--ink);
+  --grad-lift: var(--ink);
+  --brand-gradient: var(--grad);
+  --brand-a: var(--grad-a);
+  --brand-b: var(--grad-b);
+  --orange: var(--ink);
+  --orange-dim: var(--charcoal);
+  --orange-soft: rgba(255, 255, 255, 0.06);
+  --orange-heat: rgba(255, 255, 255, 0.1);
+  --gd-accent: var(--ink);
+  --gd-accent-soft: rgba(255, 255, 255, 0.06);
+
+  /* Type */
+  --font-sans: var(--font-clash), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-clash), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-clash), ui-sans-serif, system-ui, sans-serif;
+
+  --gd-bg: var(--paper);
+  --gd-panel: var(--surface);
+  --gd-panel-2: var(--cloud);
+  --gd-border: var(--hairline);
+  --gd-muted: var(--gray);
+  --gd-text: var(--ink);
+  --gd-soft: var(--graphite);
+  --gd-font-sans: var(--font-sans);
+  --gd-font-display: var(--font-display);
+  --gd-font-mono: var(--font-mono);
+
+  /* Shape & space */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --lab-radius: var(--radius);
+  --lab-radius-sm: var(--radius-sm);
+  --lab-radius-card: var(--radius-lg);
+  --lab-sidebar-width: 15.5rem;
+  --lab-content-max: 72rem;
+  --lab-space-section: 4rem;
+  --lab-space-block: 1.5rem;
+
+  /* Elevation — one soft level, one floating level */
+  /* On black, depth comes from a lighter top edge, not a drop shadow. */
+  --shadow-1: 0 1px 0 rgba(0, 0, 0, 0.03);
+  --shadow-2: 0 1px 2px rgba(0, 0, 0, 0.05), 0 18px 40px -16px rgba(0, 0, 0, 0.18);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Dark surfaces */
+  --dark: #000000;
+  --dark-elevated: #0a0a0b;
+  --dark-panel: #141415;
+  --dark-border: rgba(255, 255, 255, 0.09);
+  --dark-border-strong: rgba(255, 255, 255, 0.16);
+  --dark-fg: #f5f5f7;
+  --dark-muted: #a1a1a6;
+  --dark-muted-2: #6e6e73;
+}
+
+.lab-dark {
+  --panel: var(--dark-elevated);
+  --panel-2: var(--dark-panel);
+  --panel-3: #262628;
+  --border: var(--dark-border);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --foreground: var(--dark-fg);
+  --muted: var(--dark-muted);
+  --muted-2: var(--dark-muted-2);
+  --muted-3: #5a5a5f;
+  --orange: #f5f5f7;
+  --orange-soft: rgba(255, 255, 255, 0.08);
+  color: var(--dark-fg);
+  background: var(--dark);
+}
+
+/* Dark mode flips the page. Black boxes stay black and lift off the page. */
+html[data-theme="dark"] {
+  --paper: #0a0a0a;
+  --surface: #141414;
+  --cloud: #1c1c1c;
+  --raise: #262626;
+  --hairline: rgba(255, 255, 255, 0.1);
+  --mist: rgba(255, 255, 255, 0.22);
+  --silver: #8d8d88;
+  --gray: #b0b0aa;
+  --graphite: #d2d2cc;
+  --charcoal: #e6e6e1;
+  --ink-2: #f3f3ef;
+  --ink: #fafaf8;
+  --white: #ffffff;
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --positive: #5fc28e;
+  --negative: #ec7b6f;
+  --live: #5fc28e;
+  --danger: #ec7b6f;
+  --shadow-1: 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-2: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px -16px rgba(0, 0, 0, 0.7);
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color-scheme: light;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 450;
+  letter-spacing: -0.02em;
+}
+
+/* Clash reads heavy at 500–600. Keep one step lighter than the utility name. */
+.font-medium {
+  font-weight: 450;
+}
+.font-semibold {
+  font-weight: 500;
+}
+.font-bold {
+  font-weight: 550;
+}
+
+.font-mono,
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+.font-mono {
+  font-family: var(--font-mono);
+  font-weight: 450;
+  letter-spacing: -0.015em;
+}
+
+/* Gradient accent helpers */
+.bg-grad {
+  background: var(--ink);
+  color: #fff;
+}
+.text-grad {
+  color: inherit;
+}
+
+::selection {
+  background: #0a0a0a;
+  color: #fff;
+}
+html[data-theme="dark"] ::selection {
+  background: #fafaf8;
+  color: #0a0a0a;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.lab-dark :focus-visible {
+  outline-color: #f5f5f7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

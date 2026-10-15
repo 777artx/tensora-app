@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><link rel="icon" href="/landing/icons/favicon.svg?v=frontier1" type="image/svg+xml"/><link rel="icon" href="/landing/icons/favicon-32.png?v=frontier1" type="image/png" sizes="32x32"/>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate"/>
+    <script src="/lab-dashboard/gd/fresh.js?v=fresh3"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard | Frontier Lab</title>
+    <meta
+      name="description"
+      content="Company metrics for Frontier — revenue, inference, GPU treasury, and lab activity."
+    />
+    <link rel="stylesheet" href="/lab-router/theme.css?v=navy2" />
+    <link rel="stylesheet" href="/lab-dashboard/dashboard/overview/overview.css?v=navy2" />
+      <link rel="stylesheet" href="/lab-dashboard/gd/shell.css?v=dark1" />
+</head>
+  <body>
+    <div class="gd-shell">
+      <aside class="gd-side">
+        <a class="gd-brand" href="/lab" aria-label="Frontier home">
+          <img class="gd-brand-mark" src="/landing/icons/frontier-mark.png?v=frontier1" alt="" /><span class="gd-brand-name">Frontier</span>
+        </a>
+        <div id="gd-lab-nav-mount"></div>
+      </aside>
+
+      <main class="gd-main gd-ov">
+        <header class="gd-topbar">
+          <div>
+            <h1>Dashboard</h1>
+            <p>
+              Revenue, inference volume, GPU usage, and lab activity across Frontier.
+            </p>
+          </div>
+          <div class="gd-actions">
+            <a class="gd-btn" href="/lab/inference">Inference</a>
+            <a class="gd-btn gd-btn-primary" href="/lab/dashboard/billing">Billing</a>
+          </div>
+        </header>
+
+        <section class="gd-ov-strip" id="gd-ov-kpis" aria-label="Key metrics"></section>
+
+        <div class="gd-ov-row">
+          <section class="gd-card gd-ov-panel gd-ov-panel-grow">
+            <div class="gd-ov-panel-head">
+              <div>
+                <h2>Revenue</h2>
+                <p>Monthly recurring revenue · since June</p>
+              </div>
+              <div class="gd-ov-legend">
+                <span><i style="background:#a8c4e0"></i>MRR</span>
+              </div>
+            </div>
+            <div class="gd-ov-chart" id="gd-ov-rev-chart"></div>
+          </section>
+
+          <section class="gd-card gd-ov-panel gd-ov-panel-side">
+            <div class="gd-ov-panel-head">
+              <div>
+                <h2>Treasury</h2>
+                <p>Preseed cash and inference pool</p>
+              </div>
+            </div>
+            <div id="gd-ov-treasury"></div>
+          </section>
+        </div>
+
+        <section class="gd-card gd-ov-panel">
+          <div class="gd-ov-panel-head">
+            <div>
+                <h2>Inference</h2>
+                <p>
+                  Token volume above the midline. Below: compute paid to providers (amber) and fees
+                  collected into the pool (green).
+                </p>
+            </div>
+            <div class="gd-ov-range" id="gd-ov-inf-range">
+              <button type="button" data-range="7D">7D</button>
+              <button type="button" data-range="30D">30D</button>
+              <button type="button" class="active" data-range="90D">90D</button>
+            </div>
+          </div>
+          <div class="gd-ov-inf-stats" id="gd-ov-inf-stats"></div>
+          <div class="gd-ov-chart gd-ov-chart-inf" id="gd-ov-inf-chart"></div>
+        </section>
+
+        <div class="gd-ov-row gd-ov-row-3">
+          <section class="gd-card gd-ov-panel">
+            <div class="gd-ov-panel-head">
+              <div>
+                <h2>GPU hours</h2>
+                <p>On-demand · 30 days</p>
+              </div>
+            </div>
+            <div id="gd-ov-gpu"></div>
+          </section>
+          <section class="gd-card gd-ov-panel">
+            <div class="gd-ov-panel-head">
+              <div>
+                <h2>Lab funnel</h2>
+                <p>Env → eval → train</p>
+              </div>
+            </div>
+            <div id="gd-ov-funnel"></div>
+          </section>
+          <section class="gd-card gd-ov-panel">
+            <div class="gd-ov-panel-head">
+              <div>
+                <h2>Growth</h2>
+                <p>Teams and builders</p>
+              </div>
+            </div>
+            <div id="gd-ov-growth"></div>
+          </section>
+        </div>
+
+        <section class="gd-card gd-ov-panel">
+          <div class="gd-ov-panel-head">
+            <div>
+              <h2>Top models</h2>
+              <p>Share of pool calls · last 7 days</p>
+            </div>
+            <a class="gd-ov-more" href="/lab/inference">View Inference →</a>
+          </div>
+          <div id="gd-ov-models"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/lab-dashboard/gd/nav.js?v=dark1"></script>
+    <script src="/lab-dashboard/gd/shell.js?v=dark1"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var side = document.querySelector(".gd-side");
+        if (side && window.GDLabNav) window.GDLabNav.mountStaticNav(side, "overview");
+      });
+    </script>
+    <script src="/lab-dashboard/dashboard/overview/overview.js?v=navy4" defer></script>
+  </body>
+</html>

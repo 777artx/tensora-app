@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate"/>
+    <script src="/lab-dashboard/gd/fresh.js?v=fresh3"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Model Router | Frontier Lab</title>
+    <meta
+      name="description"
+      content="Automatically route each prompt to the best model. Classify the task, apply a cost tier, and run."
+    />
+    <link rel="icon" href="/landing/icons/favicon.svg?v=frontier1" type="image/svg+xml" />
+    <link rel="icon" href="/landing/icons/favicon-32.png?v=frontier1" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/landing/icons/apple-touch-icon.png?v=frontier1" />
+    <link rel="stylesheet" href="/lab-dashboard/_next/static/css/3691ca63cd989f77.css" />
+    <link rel="stylesheet" href="/lab-router/theme.css?v=navy4" />
+    <link rel="stylesheet" href="/site-chrome.css?v=chrome2" />
+  </head>
+  <body class="__variable_0ed695">
+    <div class="gd-shell">
+      <aside class="gd-side">
+        <a class="gd-brand" href="/lab/inference" aria-label="Frontier home">
+          <span class="site-brand-lockup" style="display:inline-flex;align-items:center;gap:.55rem"><img src="/landing/icons/frontier-mark.png?v=frontier1" alt="" style="height:1.5rem;width:1.5rem;object-fit:contain"/><span style="font-size:1.15rem;font-weight:560;letter-spacing:-.02em;color:inherit;line-height:1">Frontier</span></span>
+        </a>
+        <div id="gd-lab-nav-mount"></div>
+      </aside>
+
+      <main class="gd-main">
+        <div class="gd-topbar">
+          <div>
+            <h1>Model Router</h1>
+            <p>
+              Send any prompt. We classify the task, rank models by fit and cost tier, then pick the
+              best model automatically.
+            </p>
+          </div>
+          <div class="gd-actions">
+            <button type="button" class="gd-btn" id="gd-router-wallet-btn">Connect wallet</button>
+            <a class="gd-btn" href="/lab/inference">Browse models</a>
+            <a class="gd-btn gd-btn-primary" href="/lab/inference#docs">Inference docs</a>
+          </div>
+        </div>
+
+        <section class="gd-router-arch" aria-label="Model Router architecture">
+          <video
+            class="gd-arch-bg"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="auto"
+            disablepictureinpicture
+            controlslist="nodownload nofullscreen noremoteplayback"
+            poster="/landing/backgrounds/defined-hero-poster.jpg"
+          >
+            <source src="/landing/backgrounds/defined-hero.mp4" type="video/mp4" />
+          </video>
+          <div class="gd-arch-scrim" aria-hidden="true"></div>
+          <div class="gd-arch-board">
+            <div class="gd-arch-col gd-arch-in">
+              <div class="gd-arch-kicker">Your app</div>
+              <div class="gd-arch-node">
+                <span class="gd-arch-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.2c.8-3.2 3.2-4.8 6.5-4.8s5.7 1.6 6.5 4.8"/></svg>
+                </span>
+                <span>Humans</span>
+              </div>
+              <div class="gd-arch-node">
+                <span class="gd-arch-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="8" width="12" height="10" rx="2"/><circle cx="9.5" cy="12.5" r="1"/><circle cx="14.5" cy="12.5" r="1"/><path d="M9 16.2h6"/><path d="M10 8V6.5a2 2 0 0 1 4 0V8"/></svg>
+                </span>
+                <span>Agents</span>
+              </div>
+              <div class="gd-arch-node">
+                <span class="gd-arch-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M15 4v16M4 9h16M4 15h16"/></svg>
+                </span>
+                <span>Machines</span>
+              </div>
+            </div>
+
+            <svg class="gd-arch-wires gd-arch-wires-l" viewBox="0 0 56 320" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 48 H22 V160 H56" />
+              <path d="M0 160 H56" />
+              <path d="M0 272 H22 V160 H56" />
+              <circle cx="22" cy="160" r="3.2" />
+              <circle cx="56" cy="160" r="3.2" />
+            </svg>
+
+            <div class="gd-arch-hub">
+              <div class="gd-arch-brand">
+                <img src="/landing/icons/favicon-32.png?v=frontier1" alt="" width="20" height="20" />
+                <span>Frontier</span>
+              </div>
+              <div class="gd-arch-hub-label">Model Router</div>
+              <div class="gd-arch-pills">
+                <span>Classify</span>
+                <span>Rank</span>
+                <span class="is-on">Routing</span>
+                <span>Cost tier</span>
+              </div>
+            </div>
+
+            <svg class="gd-arch-wires gd-arch-wires-r" viewBox="0 0 56 320" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 160 H34 V48 H56" />
+              <path d="M0 160 H56" />
+              <path d="M0 160 H34 V272 H56" />
+              <circle cx="0" cy="160" r="3.2" />
+              <circle cx="34" cy="160" r="3.2" />
+            </svg>
+
+            <div class="gd-arch-col gd-arch-out">
+              <div class="gd-arch-group">
+                <div class="gd-arch-kicker">Models</div>
+                <div class="gd-arch-logos">
+                  <span title="OpenAI"><img src="/landing/icons/partners/openai.svg" alt="OpenAI" /></span>
+                  <span title="Anthropic"><img src="/landing/icons/partners/anthropic.svg" alt="Anthropic" /></span>
+                  <span title="Gemini"><img src="/landing/icons/partners/gemini.svg" alt="Gemini" /></span>
+                  <span title="DeepSeek"><img src="/landing/icons/partners/deepseek.svg" alt="DeepSeek" /></span>
+                  <span title="Qwen"><img src="/landing/icons/partners/qwen.svg" alt="Qwen" /></span>
+                  <span title="Llama"><img src="/landing/icons/partners/llama.svg" alt="Llama" /></span>
+                </div>
+              </div>
+              <div class="gd-arch-group">
+                <div class="gd-arch-kicker">Lab</div>
+                <div class="gd-arch-mini">
+                  <span>Environments</span>
+                  <span>Evaluations</span>
+                  <span>Training</span>
+                </div>
+              </div>
+              <div class="gd-arch-group">
+                <div class="gd-arch-kicker">Inference</div>
+                <div class="gd-arch-mini">
+                  <span>API</span>
+                  <span>Wallet</span>
+                  <span>20k $FRONTIER</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="gd-meta" id="gd-router-meta">
+          Cost tier: medium. Controls how far up the capability ladder routing can go.
+        </div>
+
+        <div class="gd-filters" id="gd-router-tiers">
+          <button type="button" class="gd-chip" data-tier="low">Low</button>
+          <button type="button" class="gd-chip active" data-tier="medium">Medium</button>
+          <button type="button" class="gd-chip" data-tier="high">High</button>
+          <button type="button" class="gd-chip" data-tier="max">Max</button>
+        </div>
+
+        <div class="gd-router-grid" id="gd-router-app"></div>
+      </main>
+    </div>
+    <link rel="stylesheet" href="/lab-dashboard/gd/shell.css?v=tensora3" />
+    <script src="/lab-dashboard/gd/nav.js?v=tensora3"></script>
+    <script src="/lab-dashboard/gd/shell.js?v=tensora3"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var side = document.querySelector(".gd-side");
+        if (side && window.GDLabNav) window.GDLabNav.mountStaticNav(side, "router");
+      });
+    </script>
+    <script src="/lab-router/app.js?v=rh1" defer></script>
+  </body>
+</html>
