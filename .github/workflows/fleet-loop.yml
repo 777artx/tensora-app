@@ -23,6 +23,21 @@
 #
 # Check usage at: Settings -> Billing -> Actions.
 #
+# Triggering reliably
+# -------------------
+# `schedule` is unreliable at short intervals: GitHub treats cron as best-effort
+# and skipped 51+ minutes of */5 ticks on this repo. For dependable cadence use
+# the `repository_dispatch` trigger below, fired by an external scheduler
+# (cron-job.org, EasyCron, a VPS crontab, etc.):
+#
+#   curl -X POST \
+#     -H "Authorization: Bearer <fine-grained PAT with Contents: write>" \
+#     -H "Accept: application/vnd.github+json" \
+#     https://api.github.com/repos/777artx/tensora-app/dispatches \
+#     -d '{"event_type":"fleet-tick"}'
+#
+# The PAT only needs permission to dispatch. Never commit it to this repo.
+#
 # Required repository secrets
 # ---------------------------
 #   FLEET_WALLETS_JSON   full contents of .ops/pulse/wallets.json
@@ -30,9 +45,11 @@
 #   KV_REST_API_TOKEN
 #   BASE_RPC_URL         optional; a private Base RPC is more reliable in CI
 #
-# SECURITY: these secrets hold keys that can move real funds. Any workflow
-# change or compromised dependency in this repo can read them. Keep the repo
-# private, limit admin access, and rotate the fleet if it is ever exposed.
+# SECURITY: this repo is PUBLIC, so its code, history and run logs are public,
+# while these secrets remain private to Actions. Any workflow change or
+# compromised dependency in this repo can still read them, so treat every PR and
+# action ref as security-relevant. Never echo a secret; never commit the wallet
+# file. Rotate the fleet if a key is ever exposed.
 # Keys are written to the gitignored `.ops/pulse/` path at runtime and the
 # directory is deleted at the end of the run.
 
@@ -40,8 +57,15 @@ name: Fleet loop
 
 on:
   schedule:
-    # Continuous. Requires the repo to be PUBLIC (unmetered Actions minutes).
+    # Requested cadence. GitHub's cron is best-effort and has been observed to
+    # skip */5 runs for long stretches, so treat this as a backstop rather than
+    # the primary trigger. See the repository_dispatch note below.
     - cron: "*/5 * * * *"
+  # Primary trigger. An external scheduler POSTs to
+  #   /repos/<owner>/<repo>/dispatches   with  {"event_type":"fleet-tick"}
+  # which fires this workflow at a time the caller actually controls.
+  repository_dispatch:
+    types: [fleet-tick]
   workflow_dispatch:
     inputs:
       cycles:
