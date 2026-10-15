@@ -7,22 +7,19 @@
 #
 # Minutes budget — read this before changing the schedule
 # -------------------------------------------------------
-# GitHub bills each run rounded UP to a full minute, and a PRIVATE repo gets
-# 2,000 free minutes/month. Continuous coverage needs ~43,000 minutes, so a
-# private repo physically cannot run this 24/7 on the free tier.
+# GitHub bills each run rounded UP to a full minute. A PRIVATE repo gets only
+# 2,000 free minutes/month, which cannot cover continuous operation (~43,000
+# min/mo), so this repo runs PUBLIC where Actions minutes are unmetered.
 #
-# Measured on this repo: one cycle takes ~2.5 minutes and produces 20 cascade
-# transfers plus ~6 book fills. The schedule below is sized from that so the
-# month fits the budget instead of dying after a couple of days:
+# Measured on this repo: one cycle takes ~2.5 minutes and produces ~20 cascade
+# transfers plus ~6 book fills. At 1 cycle per run:
 #
-#   1 cycle/run, every 2 hours -> 360 runs/mo x ~3 billed min = ~1,080 min
+#   */5 every 5 min  ->  288 runs/day x ~3 billed min = ~14,400 min/month
 #
-# That is ~12 bursts/day and leaves headroom for retries. To get true
-# continuous 24/7 instead, pick one:
-#
-#   * make the repo public  -> unlimited free Actions minutes (simplest)
-#   * raise the spending limit / pay for minutes on a private repo
-#   * run `npm run fleet:loop:forever` on a VPS
+# Free on a public repo. Continuous operation requires the repo to stay public:
+# if it is flipped back to private, this schedule will exhaust the 2,000-minute
+# allowance in roughly 4 days and then stop until the month resets. Change the
+# cron to `0 * * * *` before making it private again.
 #
 # Check usage at: Settings -> Billing -> Actions.
 #
@@ -43,8 +40,8 @@ name: Fleet loop
 
 on:
   schedule:
-    # Every 2 hours — fits the 2,000 free min/month budget on a private repo.
-    - cron: "0 */2 * * *"
+    # Continuous. Requires the repo to be PUBLIC (unmetered Actions minutes).
+    - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       cycles:
