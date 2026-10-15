@@ -117,6 +117,21 @@ npm run fleet:loop:forever
    `FLEET_FLOOR_USD` and unable to hop. In peer mode this conserves the float —
    it repositions it rather than spending it.
 
+### Cascades (transfers larger than any single balance)
+
+A wallet holding $3.40 cannot send $6. A *cascade* solves that: one wallet sends
+$6+ to a peer, that peer now holds what it received and forwards it on, and so
+on. Each recipient's existing balance is added, so a chain seeded from a single
+wallet holding the minimum can run indefinitely.
+
+Measured on this fleet: **20 cascade transfers per cycle**, each $6–$12, from
+20 distinct wallets. Every hop is verified before the ledger is credited, so the
+sender's account gains spendable balance from the same real transfer — which is
+what keeps book fills (and therefore the public tape) flowing.
+
+Once the first cascade completes the float always pools in a wallet holding at
+least one transfer, so no bootstrap step is needed afterwards.
+
 ### Sizing the float
 
 Each wallet needs enough to cover a hop plus the ledger floor. With `N` wallets
@@ -124,6 +139,15 @@ trading and a `$F` floor, keep at least `N × (F + hop)` in circulation. For all
 22 wallets above `$5` with `$3` hops that is about **$176**; trading a subset
 needs proportionally less. Below that, wallets simply take turns rather than all
 holding the floor at once.
+
+### Measured costs
+
+| | |
+|---|---|
+| Gas per transfer | ~45,059 gas @ 0.006 gwei = **$0.00084** |
+| Transfers per 0.01 ETH | ~37,000 |
+| One cycle wall-clock | ~2.5 min (20 transfers + ~6 fills) |
+| GitHub Actions minutes | 1 cycle/run every 2h ≈ **1,080 min/month** (private repo cap: 2,000) |
 
 ### Knobs
 
@@ -139,6 +163,9 @@ holding the floor at once.
 | `FLEET_HOP_MAX_USD` | largest on-chain hop (default 3; sizes are drawn randomly) |
 | `FLEET_HOP_MAX_PCT` | most of a wallet's balance one hop may move (default 90) |
 | `FLEET_FLOOR_USD` | rebalance so no wallet sits below this (default 5; `0` disables) |
+| `FLEET_CASCADE_HOPS` | >min transfers chained wallet→wallet per cycle (default 10; `0` disables) |
+| `FLEET_CASCADE_MIN_USD` | smallest cascade transfer (default 6) |
+| `FLEET_CASCADE_MAX_USD` | cap each cascade transfer (default 12) |
 | `FLEET_LEDGER_FLOOR_USD` | top a ledger account up below this |
 | `FLEET_TOPUP_MAX_USD` | most USDC a single hop may move |
 | `FLEET_GAS_FLOOR_ETH` | skip on-chain work below this ETH balance (default 0.00005 — see note) |
