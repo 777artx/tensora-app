@@ -11,12 +11,13 @@
 # 2,000 free minutes/month. Continuous coverage needs ~43,000 minutes, so a
 # private repo physically cannot run this 24/7 on the free tier.
 #
-# The schedule below is deliberately tuned to FIT the 2,000-minute budget so it
-# runs all month instead of dying after ~2 days:
+# Measured on this repo: one cycle takes ~2.5 minutes and produces 20 cascade
+# transfers plus ~6 book fills. The schedule below is sized from that so the
+# month fits the budget instead of dying after a couple of days:
 #
-#   every 2 hours (360 runs/mo) x ~5 billed min  = ~1,800 min/month
+#   1 cycle/run, every 2 hours -> 360 runs/mo x ~3 billed min = ~1,080 min
 #
-# That yields a burst of ~6 cycles (36 trades) every two hours. To get true
+# That is ~12 bursts/day and leaves headroom for retries. To get true
 # continuous 24/7 instead, pick one:
 #
 #   * make the repo public  -> unlimited free Actions minutes (simplest)
@@ -49,7 +50,7 @@ on:
       cycles:
         description: "Cycles to run in this job"
         required: false
-        default: "6"
+        default: "1"
       dry:
         description: "Plan only — read balances, submit nothing"
         type: boolean
@@ -64,8 +65,9 @@ concurrency:
 jobs:
   pulse:
     runs-on: ubuntu-latest
-    # Bounded so a run fits inside the free-minute budget.
-    timeout-minutes: 10
+    # One cycle is ~2.5 min. Keep the job comfortably under the runner ceiling
+    # so a slow cycle finishes instead of being killed mid-transfer.
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -102,7 +104,7 @@ jobs:
           # Sustainability: hop to a peer, never the receive-only treasury.
           FLEET_FUND: peer
           FLEET_HOP_CHANCE: "0.15"
-          FLEET_CYCLES: ${{ github.event.inputs.cycles || '6' }}
+          FLEET_CYCLES: ${{ github.event.inputs.cycles || '1' }}
           FLEET_CADENCE_MS: "20000"
           FLEET_ROUNDS: "1"
           FLEET_PER_CYCLE: "6"
