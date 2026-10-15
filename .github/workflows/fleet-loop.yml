@@ -111,9 +111,9 @@ jobs:
           FLEET_LEDGER_FLOOR_USD: "10"
           FLEET_TOPUP_MAX_USD: "15"
           FLEET_HOP_MIN_USD: "0.25"
-          FLEET_HOP_MAX_USD: "3"
+          FLEET_HOP_MAX_USD: "2"
           FLEET_HOP_MAX_PCT: "90"
-          FLEET_FLOOR_USD: "5"
+          FLEET_FLOOR_USD: "2.5"
           FLEET_SPACING_MS: "4000"
           FLEET_GAS_FLOOR_ETH: "0.00005"
         run: |
