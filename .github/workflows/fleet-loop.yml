@@ -72,6 +72,14 @@ on:
         description: "Cycles to run in this job"
         required: false
         default: "1"
+      per_cycle:
+        description: "Wallets trading per cycle"
+        required: false
+        default: "6"
+      rounds:
+        description: "Order rounds per cycle"
+        required: false
+        default: "1"
       dry:
         description: "Plan only — read balances, submit nothing"
         type: boolean
@@ -127,8 +135,8 @@ jobs:
           FLEET_HOP_CHANCE: "0.15"
           FLEET_CYCLES: ${{ github.event.inputs.cycles || '1' }}
           FLEET_CADENCE_MS: "20000"
-          FLEET_ROUNDS: "1"
-          FLEET_PER_CYCLE: "6"
+          FLEET_ROUNDS: ${{ github.event.inputs.rounds || '1' }}
+          FLEET_PER_CYCLE: ${{ github.event.inputs.per_cycle || '6' }}
           FLEET_MIN_USD: "2"
           FLEET_MAX_USD: "25"
           FLEET_LEDGER_FLOOR_USD: "10"
